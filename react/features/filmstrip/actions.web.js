@@ -77,14 +77,15 @@ export function setTileViewDimensions() {
                 disableTileEnlargement,
                 maxColumns,
                 numberOfParticipants,
-                numberOfVisibleTiles
+                desiredNumberOfVisibleTiles: numberOfVisibleTiles
             });
         const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
-        const hasScroll = clientHeight < thumbnailsTotalHeight;
+        const availableHeight = clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN;
+        const hasScroll = availableHeight < thumbnailsTotalHeight;
         const filmstripWidth
             = Math.min(clientWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN, columns * (TILE_HORIZONTAL_MARGIN + width))
                 + (hasScroll ? SCROLL_SIZE : 0);
-        const filmstripHeight = Math.min(clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN, thumbnailsTotalHeight);
+        const filmstripHeight = Math.min(availableHeight, thumbnailsTotalHeight);
 
         dispatch({
             type: SET_TILE_VIEW_DIMENSIONS,
@@ -145,7 +146,7 @@ export function setVerticalViewDimensions() {
                 isVerticalFilmstrip: true,
                 maxColumns,
                 numberOfParticipants,
-                numberOfVisibleTiles
+                desiredNumberOfVisibleTiles: numberOfVisibleTiles
             });
             const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
 
