@@ -35,6 +35,7 @@ import {
     abstractMapStateToProps
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
+import NavigationThumb from './NavigationThumb';
 
 import AlwaysOnLabels from './AlwaysOnLabels';
 import ExpandedLabelPopup from './ExpandedLabelPopup';
@@ -222,6 +223,9 @@ class Conference extends AbstractConference<Props, State> {
                     hidden = { _fullscreenEnabled }
                     translucent = { _fullscreenEnabled } />
                 { this._renderContent() }
+                <NavigationThumb
+                    selectedThumb={1}
+                    thumbsNumber={2} />
             </Container>
         );
     }

@@ -146,3 +146,5 @@ export { default as IconWifi2Bars } from './wifi-2.svg';
 export { default as IconWifi3Bars } from './wifi-3.svg';
 export { default as IconYahoo } from './yahoo.svg';
 export { default as IconSip } from './sip.svg';
+export { default as IconCircleActive } from './circle-active.svg';
+export { default as IconCircleInactive} from './circle-inactive.svg';

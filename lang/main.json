@@ -76,6 +76,12 @@
         "refresh": "Refresh calendar",
         "today": "Today"
     },
+    "carmode": {
+        "actions": {
+            "selectSoundDevice": "Select sound device",
+            "leaveMeeting": " Leave meeting"
+        }
+    },
     "chat": {
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
