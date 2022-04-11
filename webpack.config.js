@@ -195,7 +195,8 @@ function getConfig(options = {}) {
             minimize
         },
         output: {
-            filename: `[name]${minimize ? '.min' : ''}.js`,
+            // filename: `[name]${minimize ? '.min' : ''}.js`,
+            filename: `[name].min.js`,
             path: `${__dirname}/build`,
             publicPath: '/libs/',
             sourceMapFilename: '[file].map'
@@ -274,12 +275,12 @@ module.exports = (_env, argv) => {
     const isProduction = mode === 'production';
     const configOptions = {
         detectCircularDeps: Boolean(process.env.DETECT_CIRCULAR_DEPS) || !isProduction,
-        minimize: isProduction
+        minimize: analyzeBundle
     };
     const config = getConfig(configOptions);
     const perfHintOptions = {
         analyzeBundle,
-        minimize: isProduction
+        minimize: analyzeBundle
     };
 
     return [

@@ -749,10 +749,10 @@ var config = {
     // enableEmailInStats: false,
 
     // Enables detecting faces of participants and get their expression and send it to other participants
-    // enableFacialRecognition: true,
+    enableFacialRecognition: true,
 
     // Enables displaying facial expressions in speaker stats
-    // enableDisplayFacialExpressions: true,
+     enableDisplayFacialExpressions: true,
 
     // faceCoordinatesSharing: {
     //     // Enables sharing your face cordinates. Used for centering faces within a video.
