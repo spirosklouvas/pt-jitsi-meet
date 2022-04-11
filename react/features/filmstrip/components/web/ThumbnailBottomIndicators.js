@@ -10,6 +10,8 @@ import { LAYOUTS } from '../../../video-layout';
 
 import StatusIndicators from './StatusIndicators';
 
+import { FACIAL_EXPRESSION_EMOJIS } from '../../../facial-recognition/constants.js';
+
 declare var interfaceConfig: Object;
 
 type Props = {
@@ -83,6 +85,9 @@ const ThumbnailBottomIndicators = ({
                 </span>
             )
         }
+        <span className = "EMOTION_EMOJI">
+            😊
+        </span>
     </div>);
 };
 

@@ -1,6 +1,7 @@
 // @flow
 import './faceApiPatch';
 import * as faceapi from '@vladmandic/face-api';
+import logger from './logger';
 
 import {
     CLEAR_TIMEOUT,
@@ -102,6 +103,7 @@ onmessage = async function(message) {
             facialExpression = detections.expressions.asSortedArray()[0].expression;
         }
         timer = setTimeout(() => {
+            logger.warn("NOISY_DEBUG: new facial expression", facialExpression)
             self.postMessage({
                 type: FACIAL_EXPRESSION_MESSAGE,
                 value: facialExpression

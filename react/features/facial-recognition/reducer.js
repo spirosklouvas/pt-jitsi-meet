@@ -24,6 +24,7 @@ const defaultState = {
     facialExpressionsBuffer: [],
     detectionTimeInterval: -1,
     recognitionActive: false
+    // recognitionActive: true
 };
 
 ReducerRegistry.register('features/facial-recognition', (state = defaultState, action) => {
