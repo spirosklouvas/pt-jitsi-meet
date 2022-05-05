@@ -15,6 +15,8 @@ import RaisedHandIndicator from './RaisedHandIndicator';
 import StatusIndicators from './StatusIndicators';
 import VideoMenuTriggerButton from './VideoMenuTriggerButton';
 
+import { FACIAL_EXPRESSION_EMOJIS } from '../../../facial-recognition/constants.js';
+
 declare var interfaceConfig: Object;
 
 type Props = {
@@ -72,6 +74,17 @@ const useStyles = makeStyles(() => {
     };
 });
 
+function lfe_to_emoji(lastFacialExpression) {
+    if (lastFacialExpression in FACIAL_EXPRESSION_EMOJIS) {
+        return FACIAL_EXPRESSION_EMOJIS[lastFacialExpression];
+    } else if (lastFacialExpression === "INITIAL_LAST_FACIAL_EXPRESSION" ||
+        lastFlastFacialExpression === "INVALID_LOCAL_LFE") {
+        return "";
+    } else {
+        return lastFacialExpression;
+    }
+}
+
 const ThumbnailTopIndicators = ({
     currentLayout,
     hidePopover,
@@ -104,13 +117,11 @@ const ThumbnailTopIndicators = ({
         if (stats[participantId]) {
             if (stats[participantId].isLocalStats()) {
                 lastFacialExpression =
-                    `${lfe} ${dt.getMinutes()} ${dt.getSeconds()}`
+                    `${lfe_to_emoji(lfe)} ${dt.getMinutes()}:${dt.getSeconds()}`
             } else {
                 lastFacialExpression =
-                    `${stats[participantId].getLastFacialExpression()} ${dt.getMinutes()} ${dt.getSeconds()}`
+                    `${lfe_to_emoji(stats[participantId].getLastFacialExpression())} ${dt.getMinutes()}:${dt.getSeconds()}`
             }
-        } else {
-            lastFacialExpression = `UKNOWN PARTICIPANTID: ${participantId} ${dt.getMinutes()} ${dt.getSeconds()}`
         }
     }
 
