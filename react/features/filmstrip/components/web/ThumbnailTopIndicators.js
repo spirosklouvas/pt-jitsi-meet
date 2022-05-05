@@ -113,14 +113,11 @@ const ThumbnailTopIndicators = ({
         { lastFacialExpression: "INVALID_LOCAL_LFE" };
     if (conference && participantId) {
         const stats = conference.getSpeakerStats();
-        let dt = new Date();
         if (stats[participantId]) {
             if (stats[participantId].isLocalStats()) {
-                lastFacialExpression =
-                    `${lfe_to_emoji(lfe)} ${dt.getMinutes()}:${dt.getSeconds()}`
+                lastFacialExpression = lfe_to_emoji(lfe);
             } else {
-                lastFacialExpression =
-                    `${lfe_to_emoji(stats[participantId].getLastFacialExpression())} ${dt.getMinutes()}:${dt.getSeconds()}`
+                lastFacialExpression = lfe_to_emoji(stats[participantId].getLastFacialExpression());
             }
         }
     }
