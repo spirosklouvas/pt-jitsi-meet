@@ -80,7 +80,8 @@ const ThumbnailTopIndicators = ({
     local,
     participantId,
     popoverVisible,
-    showPopover
+    showPopover,
+    lastFacialExpression
 }: Props) => {
     const styles = useStyles();
 
@@ -93,6 +94,25 @@ const ThumbnailTopIndicators = ({
         || Boolean(useSelector(state => state['features/base/config'].connectionIndicators?.disabled));
 
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
+
+    const conference = useSelector(state => state['features/base/conference'].conference);
+    const { lastFacialExpression: lfe } = useSelector(state => state['features/facial-recognition']) ||
+        { lastFacialExpression: "INVALID_LOCAL_LFE" };
+    if (conference && participantId) {
+        const stats = conference.getSpeakerStats();
+        let dt = new Date();
+        if (stats[participantId]) {
+            if (stats[participantId].isLocalStats()) {
+                lastFacialExpression =
+                    `${lfe} ${dt.getMinutes()} ${dt.getSeconds()}`
+            } else {
+                lastFacialExpression =
+                    `${stats[participantId].getLastFacialExpression()} ${dt.getMinutes()} ${dt.getSeconds()}`
+            }
+        } else {
+            lastFacialExpression = `UKNOWN PARTICIPANTID: ${participantId} ${dt.getMinutes()} ${dt.getSeconds()}`
+        }
+    }
 
     return (
         <>
@@ -118,6 +138,9 @@ const ThumbnailTopIndicators = ({
                 )}
             </div>
             <div className = { styles.container }>
+                <div className = "thumbnailFacialExpressionIndicator">
+                    <span>{ lastFacialExpression }</span>
+                </div>
                 <VideoMenuTriggerButton
                     hidePopover = { hidePopover }
                     local = { local }

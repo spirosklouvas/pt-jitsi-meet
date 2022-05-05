@@ -36,6 +36,17 @@ body {
 }
 
 /**
+ * TODO: place this at the appropriate location
+ */
+.thumbnailFacialExpressionIndicator {
+    font-size: 50px;
+}
+
+.resizable-filmstrip .thumbnailFacialExpressionIndicator {
+    display: none;
+}
+
+/**
  * This will hide the focus indicator if an element receives focus via the mouse,
  * but it will still show up on keyboard focus, thus preserving accessibility.
  */
