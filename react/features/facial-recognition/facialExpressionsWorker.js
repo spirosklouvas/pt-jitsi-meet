@@ -103,7 +103,7 @@ onmessage = async function(message) {
             facialExpression = detections.expressions.asSortedArray()[0].expression;
         }
         timer = setTimeout(() => {
-            logger.warn("NOISY_DEBUG: new facial expression", facialExpression)
+            logger.warn("NS_DEBUG: worker: sending new facial expression message", facialExpression)
             self.postMessage({
                 type: FACIAL_EXPRESSION_MESSAGE,
                 value: facialExpression

@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
@@ -16,6 +17,8 @@ import StatusIndicators from './StatusIndicators';
 import VideoMenuTriggerButton from './VideoMenuTriggerButton';
 
 import { FACIAL_EXPRESSION_EMOJIS } from '../../../facial-recognition/constants.js';
+
+import logger from '../../logger';
 
 declare var interfaceConfig: Object;
 
@@ -77,8 +80,7 @@ const useStyles = makeStyles(() => {
 function lfe_to_emoji(lastFacialExpression) {
     if (lastFacialExpression in FACIAL_EXPRESSION_EMOJIS) {
         return FACIAL_EXPRESSION_EMOJIS[lastFacialExpression];
-    } else if (lastFacialExpression === "INITIAL_LAST_FACIAL_EXPRESSION" ||
-        lastFlastFacialExpression === "INVALID_LOCAL_LFE") {
+    } else if (lastFacialExpression === "INITIAL_LAST_FACIAL_EXPRESSION" || lastFacialExpression === "INVALID_LOCAL_LFE") {
         return "";
     } else {
         return lastFacialExpression;
@@ -93,8 +95,7 @@ const ThumbnailTopIndicators = ({
     local,
     participantId,
     popoverVisible,
-    showPopover,
-    lastFacialExpression
+    showPopover
 }: Props) => {
     const styles = useStyles();
 
@@ -109,8 +110,10 @@ const ThumbnailTopIndicators = ({
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
 
     const conference = useSelector(state => state['features/base/conference'].conference);
-    const { lastFacialExpression: lfe } = useSelector(state => state['features/facial-recognition']) ||
-        { lastFacialExpression: "INVALID_LOCAL_LFE" };
+    const { lastFacialExpression: lfe } = useSelector(state => state['features/facial-recognition']);
+
+    /*
+    let lastFacialExpression = "";
     if (conference && participantId) {
         const stats = conference.getSpeakerStats();
         if (stats[participantId]) {
@@ -121,6 +124,8 @@ const ThumbnailTopIndicators = ({
             }
         }
     }
+
+    */
 
     return (
         <>
@@ -147,7 +152,7 @@ const ThumbnailTopIndicators = ({
             </div>
             <div className = { styles.container }>
                 <div className = "thumbnailFacialExpressionIndicator">
-                    <span>{ lastFacialExpression }</span>
+                    <span>{ lfe.emotion }</span>
                 </div>
                 <VideoMenuTriggerButton
                     hidePopover = { hidePopover }

@@ -30,15 +30,21 @@ const defaultState = {
 ReducerRegistry.register('features/facial-recognition', (state = defaultState, action) => {
     switch (action.type) {
     case ADD_FACIAL_EXPRESSION: {
-        state.facialExpressions[action.facialExpression] += action.duration;
-        state.lastFacialExpression = action.facialExpression;
-
-        return state;
+        // state.facialExpressions[action.facialExpression] += action.duration;
+        // return state;
+        return {
+            ...state,
+            facialExpressions: {
+                ...state.facialExpressions,
+                [action.facialExpression]: state.facialExpressions[action.facialExpression] + action.duration
+            }
+        };
     }
     case ADD_TO_FACIAL_EXPRESSIONS_BUFFER: {
         return {
             ...state,
-            facialExpressionsBuffer: [ ...state.facialExpressionsBuffer, action.facialExpression ]
+            facialExpressionsBuffer: [ ...state.facialExpressionsBuffer, action.facialExpression ],
+            lastFacialExpression: action.facialExpression
         };
     }
     case CLEAR_FACIAL_EXPRESSIONS_BUFFER: {
