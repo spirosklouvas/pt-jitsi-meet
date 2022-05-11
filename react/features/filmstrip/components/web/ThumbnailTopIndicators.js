@@ -75,7 +75,8 @@ const useStyles = makeStyles(() => {
     };
 });
 
-function lfe_to_emoji(lastFacialExpression) {
+function lfe_to_emoji(lfe) {
+    const lastFacialExpression = lfe.emotion;
     if (lastFacialExpression in FACIAL_EXPRESSION_EMOJIS) {
         return FACIAL_EXPRESSION_EMOJIS[lastFacialExpression];
     } else if (lastFacialExpression === "INITIAL_LAST_FACIAL_EXPRESSION") {
@@ -84,6 +85,52 @@ function lfe_to_emoji(lastFacialExpression) {
         return lastFacialExpression;
     }
 }
+
+function renderLastFacialExpression(localLfe, conferenceStats, participantId) {
+    // if (conferenceStats && participantId && conferenceState.conference) {
+    if (conferenceStats && participantId) {
+        // const stats = conferenceState.conference.getSpeakerStats();
+        const stats = conferenceStats;
+        if (stats[participantId]) {
+            if (stats[participantId].isLocalStats()) {
+                return lfe_to_emoji(localLfe);
+            } else {
+                return lfe_to_emoji(stats[participantId].getLastFacialExpression());
+            }
+        }
+    }
+}
+
+const LocalEmotionIndicator = () => {
+    const { lastFacialExpression: lfe } = useSelector(state => state['features/facial-recognition']);
+
+    return (
+        <>
+            <div className = "thumbnailFacialExpressionIndicator">
+                <span>{ lfe_to_emoji(lfe) }</span>
+            </div>
+        </>
+    )
+
+}
+
+const RemoteEmotionIndicator = ({
+    participantId
+}) => {
+    return (
+        <>
+            <div className = "thumbnailFacialExpressionIndicator">
+                <span>{ "REMOTE" }</span>
+            </div>
+        </>
+    )
+
+}
+
+const EmotionIndicator = ({
+    local,
+    participantId
+}) => local ? (<LocalEmotionIndicator />) : ( <RemoteEmotionIndicator participantId = {participantId} />);
 
 const ThumbnailTopIndicators = ({
     currentLayout,
@@ -106,24 +153,6 @@ const ThumbnailTopIndicators = ({
         || Boolean(useSelector(state => state['features/base/config'].connectionIndicators?.disabled));
 
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
-
-    const conference = useSelector(state => state['features/base/conference'].conference);
-    const { lastFacialExpression: lfe } = useSelector(state => state['features/facial-recognition']);
-
-    /*
-    let lastFacialExpression = "";
-    if (conference && participantId) {
-        const stats = conference.getSpeakerStats();
-        if (stats[participantId]) {
-            if (stats[participantId].isLocalStats()) {
-                lastFacialExpression = lfe_to_emoji(lfe);
-            } else {
-                lastFacialExpression = lfe_to_emoji(stats[participantId].getLastFacialExpression());
-            }
-        }
-    }
-
-    */
 
     return (
         <>
@@ -149,9 +178,9 @@ const ThumbnailTopIndicators = ({
                 )}
             </div>
             <div className = { styles.container }>
-                <div className = "thumbnailFacialExpressionIndicator">
-                    <span>{ lfe.emotion }</span>
-                </div>
+                <EmotionIndicator
+                    local = { local }
+                    participantId = { participantId } />
                 <VideoMenuTriggerButton
                     hidePopover = { hidePopover }
                     local = { local }
