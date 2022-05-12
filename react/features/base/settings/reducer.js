@@ -45,7 +45,8 @@ const DEFAULT_STATE = {
         'notify.chatMessages': true
     },
     userSelectedMicDeviceLabel: undefined,
-    userSelectedSkipPrejoin: undefined
+    userSelectedSkipPrejoin: undefined,
+    sendEmotions: true
 };
 
 const STORE_NAME = 'features/base/settings';

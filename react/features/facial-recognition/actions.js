@@ -59,7 +59,7 @@ let sendInterval;
  * @returns {void}
  */
 export function loadWorker() {
-    return function(dispatch: Function) {
+    return function(dispatch: Function, getState: Function) {
         if (!window.Worker) {
             logger.warn('Browser does not support web workers');
 
@@ -91,7 +91,9 @@ export function loadWorker() {
             // receives a message with the predicted facial expression.
             if (type === FACIAL_EXPRESSION_MESSAGE) {
                 sendDataToWorker(worker, imageCapture);
-                if (!value) {
+                const sendEmotionsEnabled = getState()['features/base/settings'].sendEmotions;
+                if (!sendEmotionsEnabled || !value) {
+                    dispatch(addFacialExpression("unknown", 1, Date.now()))
                     return;
                 }
                 dispatch(addFacialExpression(value, 1, Date.now()))

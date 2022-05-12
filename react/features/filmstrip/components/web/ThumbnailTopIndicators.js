@@ -78,7 +78,8 @@ const useStyles = makeStyles(() => {
 function lfe_to_emoji(lastFacialExpression) {
     if (lastFacialExpression in FACIAL_EXPRESSION_EMOJIS) {
         return FACIAL_EXPRESSION_EMOJIS[lastFacialExpression];
-    } else if (lastFacialExpression === "INITIAL_LAST_FACIAL_EXPRESSION") {
+    } else if (lastFacialExpression === "INITIAL_LAST_FACIAL_EXPRESSION" ||
+        lastFacialExpression === "unknown") {
         return "";
     } else {
         return lastFacialExpression;

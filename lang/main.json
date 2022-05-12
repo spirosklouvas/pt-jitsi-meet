@@ -488,6 +488,7 @@
         "toggleShortcuts": "Show or hide keyboard shortcuts",
         "videoMute": "Start or stop your camera"
     },
+    "emotionIndicator": "Emotion Indicator",
     "liveStreaming": {
         "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
         "busyTitle": "All streamers are currently busy",
@@ -776,6 +777,7 @@
         "joinMeeting": "Join meeting",
         "joinWithoutAudio": "Join without audio",
         "keyboardShortcuts": "Enable Keyboard shortcuts",
+        "sendEmotions": "Share Emotion Indicator",
         "linkCopied": "Link copied to clipboard",
         "lookGood": "Your microphone is working properly",
         "or": "or",

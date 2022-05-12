@@ -85,6 +85,8 @@ export type Props = {
      */
     hideSelfView: boolean,
 
+    sendEmotions: boolean,
+
     /**
      * Invoked to obtain translated strings.
      */
@@ -136,6 +138,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
         this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
+        this._onSendEmotionsEnableChanged = this._onSendEmotionsEnableChanged.bind(this);
     }
 
     /**
@@ -277,6 +280,11 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         super._onChange({ hideSelfView: checked });
     }
 
+    _onSendEmotionsEnableChanged: (Object) => void;
+    _onSendEmotionsEnableChanged({ target: { checked } }) {
+        super._onChange({ sendEmotions: checked });
+    }
+
     /**
      * Returns the React Element for the desktop share frame rate dropdown.
      *
@@ -351,6 +359,25 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     label = { t('prejoin.keyboardShortcuts') }
                     name = 'enable-keyboard-shortcuts'
                     onChange = { this._onKeyboardShortcutEnableChanged } />
+            </div>
+        );
+    }
+
+    _renderSendEmotionsCheckbox() {
+        const { sendEmotions, t } = this.props;
+
+        return (
+            <div
+                className = 'settings-sub-pane-element'
+                key = 'send-emotions'>
+                <h2 className = 'mock-atlaskit-label'>
+                    { t('emotionIndicator') }
+                </h2>
+                <Checkbox
+                    isChecked = { sendEmotions }
+                    label = { t('prejoin.sendEmotions') }
+                    name = 'enable-send-emotions'
+                    onChange = { this._onSendEmotionsEnableChanged } />
             </div>
         );
     }
@@ -524,6 +551,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                 { showPrejoinSettings && this._renderPrejoinScreenSettings() }
                 { showNotificationsSettings && this._renderNotificationsSettings() }
                 { this._renderKeyboardShortcutCheckbox() }
+                { this._renderSendEmotionsCheckbox() }
                 { !disableHideSelfView && this._renderSelfViewCheckbox() }
             </div>
         );
