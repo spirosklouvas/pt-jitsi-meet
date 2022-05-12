@@ -92,6 +92,7 @@ export function loadWorker() {
             if (type === FACIAL_EXPRESSION_MESSAGE) {
                 sendDataToWorker(worker, imageCapture);
                 if (!value) {
+                    dispatch(addFacialExpression("unknown", 1, Date.now()))
                     return;
                 }
                 dispatch(addFacialExpression(value, 1, Date.now()))
