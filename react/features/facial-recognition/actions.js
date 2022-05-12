@@ -94,22 +94,23 @@ export function loadWorker() {
                 if (!value) {
                     return;
                 }
-                if (value === lastFacialExpression) {
-                    duplicateConsecutiveExpressions++;
-                } else {
-                    if (lastFacialExpression && lastFacialExpressionTimestamp) {
-                        dispatch(
-                        addFacialExpression(
-                            lastFacialExpression,
-                            duplicateConsecutiveExpressions + 1,
-                            lastFacialExpressionTimestamp
-                        )
-                        );
-                    }
-                    lastFacialExpression = value;
-                    lastFacialExpressionTimestamp = Date.now();
-                    duplicateConsecutiveExpressions = 0;
-                }
+                dispatch(addFacialExpression(value, 1, Date.now()))
+                // if (value === lastFacialExpression) {
+                //     duplicateConsecutiveExpressions++;
+                // } else {
+                //     if (lastFacialExpression && lastFacialExpressionTimestamp) {
+                //         dispatch(
+                //         addFacialExpression(
+                //             lastFacialExpression,
+                //             duplicateConsecutiveExpressions + 1,
+                //             lastFacialExpressionTimestamp
+                //         )
+                //         );
+                //     }
+                //     lastFacialExpression = value;
+                //     lastFacialExpressionTimestamp = Date.now();
+                //     duplicateConsecutiveExpressions = 0;
+                // }
             }
         };
         worker.postMessage({
