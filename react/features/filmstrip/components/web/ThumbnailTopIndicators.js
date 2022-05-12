@@ -2,7 +2,7 @@
 
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -75,8 +75,7 @@ const useStyles = makeStyles(() => {
     };
 });
 
-function lfe_to_emoji(lfe) {
-    const lastFacialExpression = lfe.emotion;
+function lfe_to_emoji(lastFacialExpression) {
     if (lastFacialExpression in FACIAL_EXPRESSION_EMOJIS) {
         return FACIAL_EXPRESSION_EMOJIS[lastFacialExpression];
     } else if (lastFacialExpression === "INITIAL_LAST_FACIAL_EXPRESSION") {
@@ -86,28 +85,13 @@ function lfe_to_emoji(lfe) {
     }
 }
 
-function renderLastFacialExpression(localLfe, conferenceStats, participantId) {
-    // if (conferenceStats && participantId && conferenceState.conference) {
-    if (conferenceStats && participantId) {
-        // const stats = conferenceState.conference.getSpeakerStats();
-        const stats = conferenceStats;
-        if (stats[participantId]) {
-            if (stats[participantId].isLocalStats()) {
-                return lfe_to_emoji(localLfe);
-            } else {
-                return lfe_to_emoji(stats[participantId].getLastFacialExpression());
-            }
-        }
-    }
-}
-
 const LocalEmotionIndicator = () => {
     const { lastFacialExpression: lfe } = useSelector(state => state['features/facial-recognition']);
 
     return (
         <>
             <div className = "thumbnailFacialExpressionIndicator">
-                <span>{ lfe_to_emoji(lfe) }</span>
+                <span>{ lfe_to_emoji(lfe.emotion) }</span>
             </div>
         </>
     )
@@ -117,10 +101,31 @@ const LocalEmotionIndicator = () => {
 const RemoteEmotionIndicator = ({
     participantId
 }) => {
+    const conference = useSelector(state => state['features/base/conference'].conference);
+    const [lfe, setLfe] = useState("");
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            if (conference && participantId) {
+                const stats = conference.getSpeakerStats();
+                if (stats[participantId]) {
+                    if (!stats[participantId].isLocalStats()) {
+                        const newLfe = stats[participantId].getLastFacialExpression();
+                        if (newLfe != lfe) {
+                            setLfe(newLfe);
+                        }
+                    }
+                }
+            }
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
     return (
         <>
             <div className = "thumbnailFacialExpressionIndicator">
-                <span>{ "REMOTE" }</span>
+                <span>{ lfe_to_emoji(lfe) }</span>
             </div>
         </>
     )
