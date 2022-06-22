@@ -10,21 +10,12 @@ import {
     SPEAKER_STATS_RELOAD_INTERVAL
 } from '../constants';
 
-/**
- * Component that renders the list of speaker stats.
- *
- * @param {Function} speakerStatsItem - React element tu use when rendering.
- * @param {Object} itemStyles - Styles for the speaker stats item.
- * @returns {Function}
- */
-const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Object): Function[] => {
+function useSpeakerStats() {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const conference = useSelector(state => state['features/base/conference'].conference);
-    const { stats: speakerStats, showFacialExpressions } = useSelector(state => state['features/speaker-stats']);
+    const { stats: speakerStats} = useSelector(state => state['features/speaker-stats']);
     const localParticipant = useSelector(getLocalParticipant);
-    const { defaultRemoteDisplayName } = useSelector(
-        state => state['features/base/config']) || {};
     const { enableDisplayFacialExpressions } = useSelector(state => state['features/base/config']) || {};
     const { facialExpressions: localFacialExpressions } = useSelector(
         state => state['features/facial-recognition']) || {};
@@ -77,6 +68,23 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Objec
     }, []);
 
     const localSpeakerStats = Object.keys(speakerStats).length === 0 ? getLocalSpeakerStats() : speakerStats;
+    return localSpeakerStats;
+}
+
+/**
+ * Component that renders the list of speaker stats.
+ *
+ * @param {Function} speakerStatsItem - React element tu use when rendering.
+ * @param {Object} itemStyles - Styles for the speaker stats item.
+ * @returns {Function}
+ */
+const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Object): Function[] => {
+    const { t } = useTranslation();
+    const { showFacialExpressions } = useSelector(state => state['features/speaker-stats']);
+    const { defaultRemoteDisplayName } = useSelector(
+        state => state['features/base/config']) || {};
+
+    const localSpeakerStats = useSpeakerStats();
     const userIds = Object.keys(localSpeakerStats).filter(id => localSpeakerStats[id] && !localSpeakerStats[id].hidden);
 
     return userIds.map(userId => {
