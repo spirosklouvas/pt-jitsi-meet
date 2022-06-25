@@ -1,75 +1,10 @@
 // @flow
 
-import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getLocalParticipant } from '../../base/participants';
-import { initUpdateStats } from '../actions';
-import {
-    SPEAKER_STATS_RELOAD_INTERVAL
-} from '../constants';
+import { useSpeakerStats } from '../functions'
 
-function useSpeakerStats() {
-    const dispatch = useDispatch();
-    const { t } = useTranslation();
-    const conference = useSelector(state => state['features/base/conference'].conference);
-    const { stats: speakerStats} = useSelector(state => state['features/speaker-stats']);
-    const localParticipant = useSelector(getLocalParticipant);
-    const { enableDisplayFacialExpressions } = useSelector(state => state['features/base/config']) || {};
-    const { facialExpressions: localFacialExpressions } = useSelector(
-        state => state['features/facial-recognition']) || {};
-
-    /**
-     * Update the internal state with the latest speaker stats.
-     *
-     * @returns {Object}
-     * @private
-     */
-    const getLocalSpeakerStats = useCallback(() => {
-        const stats = conference.getSpeakerStats();
-
-        for (const userId in stats) {
-            if (stats[userId]) {
-                if (stats[userId].isLocalStats()) {
-                    const meString = t('me');
-
-                    stats[userId].setDisplayName(
-                        localParticipant.name
-                            ? `${localParticipant.name} (${meString})`
-                            : meString
-                    );
-                    if (enableDisplayFacialExpressions) {
-                        stats[userId].setFacialExpressions(localFacialExpressions);
-                    }
-                }
-
-                if (!stats[userId].getDisplayName()) {
-                    stats[userId].setDisplayName(
-                        conference.getParticipantById(userId)?.name
-                    );
-                }
-            }
-        }
-
-        return stats;
-    });
-
-    const updateStats = useCallback(
-        () => dispatch(initUpdateStats(getLocalSpeakerStats)),
-        [ dispatch, initUpdateStats ]);
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            updateStats();
-        }, SPEAKER_STATS_RELOAD_INTERVAL);
-
-        return () => clearInterval(intervalId);
-    }, []);
-
-    const localSpeakerStats = Object.keys(speakerStats).length === 0 ? getLocalSpeakerStats() : speakerStats;
-    return localSpeakerStats;
-}
 
 /**
  * Component that renders the list of speaker stats.
