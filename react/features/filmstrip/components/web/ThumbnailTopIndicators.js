@@ -3,8 +3,7 @@
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
@@ -17,9 +16,6 @@ import StatusIndicators from './StatusIndicators';
 import VideoMenuTriggerButton from './VideoMenuTriggerButton';
 
 import { FACIAL_EXPRESSION_EMOJIS } from '../../../facial-recognition/constants.js';
-
-import { useSpeakerStats } from '../../../speaker-stats/functions'
-import { createLocalizedTime } from '../../../speaker-stats/components/timeFunctions';
 
 declare var interfaceConfig: Object;
 
@@ -89,41 +85,13 @@ function lfe_to_emoji(lastFacialExpression) {
     }
 }
 
-function analyzeParticipantTimes(localSpeakerStats, t) {
-    if (!localSpeakerStats) {
-        return [false, ""];
-    }
-
-    let localParticipantTime = 0;
-    let participantTimes = {};
-    for (const userId in localSpeakerStats) {
-        const userStats = localSpeakerStats[userId];
-        if (userStats.isLocalStats()) {
-            localParticipantTime = userStats.getTotalDominantSpeakerTime();
-        } else {
-            participantTimes[userStats.getUserId()] = userStats.getTotalDominantSpeakerTime();
-        }
-    }
-
-    return [true, createLocalizedTime(localParticipantTime, t)];
-
-}
-
 const LocalEmotionIndicator = () => {
     const { lastFacialExpression: lfe } = useSelector(state => state['features/facial-recognition']);
-    const { t } = useTranslation();
-
-    const localSpeakerStats = useSpeakerStats();
-
-    const [ shouldDisplayNotice, noticeMessage ] = analyzeParticipantTimes(localSpeakerStats, t);
 
     return (
         <>
             <div className = "thumbnailFacialExpressionIndicator">
                 <span>{ lfe_to_emoji(lfe.emotion) }</span>
-                {shouldDisplayNotice &&
-                    <span>{ noticeMessage }</span>
-                }
             </div>
         </>
     )

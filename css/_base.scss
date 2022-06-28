@@ -46,6 +46,19 @@ body {
     font-size: 25px;
 }
 
+.timeSpokenIndicator {
+    color: #FFF;
+    overflow: hidden;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    letter-spacing: 0.16px;
+    padding: 2px 0;
+    margin-right: 4px;
+}
+
 /**
  * This will hide the focus indicator if an element receives focus via the mouse,
  * but it will still show up on keyboard focus, thus preserving accessibility.

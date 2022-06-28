@@ -2,13 +2,20 @@
 
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 import { isDisplayNameVisible, isNameReadOnly } from '../../../base/config/functions.any';
 import DisplayName from '../../../display-name/components/web/DisplayName';
 import { LAYOUTS } from '../../../video-layout';
 
 import StatusIndicators from './StatusIndicators';
+
+import { useSpeakerStats } from '../../../speaker-stats/functions'
+import { createLocalizedTime } from '../../../speaker-stats/components/timeFunctions';
+import { IconDominantSpeaker } from '../../../base/icons';
+import { BaseIndicator } from '../../../base/react';
+import { getIndicatorsTooltipPosition } from '../../functions.web';
 
 declare var interfaceConfig: Object;
 
@@ -54,6 +61,87 @@ const useStyles = makeStyles(() => {
     };
 });
 
+function analyzeParticipantTimes(localSpeakerStats, t) {
+    if (!localSpeakerStats) {
+        return [false, ""];
+    }
+
+    let localParticipantTime = 0;
+    let remoteParticipantTimes = {};
+    for (const userId in localSpeakerStats) {
+        const userStats = localSpeakerStats[userId];
+        if (userStats.isLocalStats()) {
+            localParticipantTime = userStats.getTotalDominantSpeakerTime();
+        } else {
+            remoteParticipantTimes[userStats.getUserId()] = userStats.getTotalDominantSpeakerTime();
+        }
+    }
+
+    return [localParticipantTime, remoteParticipantTimes, true, createLocalizedTime(localParticipantTime, t)];
+}
+
+const LocalTimeSpokenIndicator = () => {
+    const localSpeakerStats = useSpeakerStats(true);
+    const { t } = useTranslation();
+
+    const [ localParticipantTime, remoteParticipantTimes, shouldDisplayNotice, noticeMessage ] =
+        analyzeParticipantTimes(localSpeakerStats, t);
+
+    return (
+        <>
+            <div className = "timeSpokenIndicator">
+                <span>{ createLocalizedTime(localParticipantTime, t) }</span>
+            </div>
+        </>
+    )
+}
+
+const RemoteTimeSpokenIndicator = ({
+    participantId
+}) => {
+    const localSpeakerStats = useSpeakerStats(false);
+    const { t } = useTranslation();
+
+    const [ localParticipantTime, remoteParticipantTimes, shouldDisplayNotice, noticeMessage ] =
+        analyzeParticipantTimes(localSpeakerStats, t);
+
+    return (
+        <>
+        {remoteParticipantTimes.hasOwnProperty(participantId)
+            && <div className = "timeSpokenIndicator">
+                <span>
+                    { createLocalizedTime(remoteParticipantTimes[participantId], t) }
+                </span>
+            </div>
+        }
+        </>
+    )
+}
+
+const TimeSpokenIndicator = ({
+    local,
+    participantId,
+    currentLayout
+}) => {
+    const tooltipPosition = getIndicatorsTooltipPosition(currentLayout);
+    return (
+        <>
+        <BaseIndicator
+            icon = { IconDominantSpeaker }
+            iconId = 'dominant-speaker'
+            iconSize = { 15 }
+            id = 'time-spoken'
+            tooltipKey = 'speakerStats.speakerTime'
+            tooltipPosition = { tooltipPosition } />
+        {local
+            ? <LocalTimeSpokenIndicator />
+            :  <RemoteTimeSpokenIndicator participantId = {participantId} />
+        }
+        </>
+    )
+
+}
+
 const ThumbnailBottomIndicators = ({
     className,
     currentLayout,
@@ -83,6 +171,10 @@ const ThumbnailBottomIndicators = ({
                 </span>
             )
         }
+        <TimeSpokenIndicator
+            local = { local }
+            participantId = { participantId }
+            currentLayout = { currentLayout } />
     </div>);
 };
 

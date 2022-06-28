@@ -201,7 +201,7 @@ export function resetHiddenStats(state: Object, stats: ?Object) {
     return resetStats;
 }
 
-export function useSpeakerStats() {
+export function useSpeakerStats(periodicUpdate = true) {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const conference = useSelector(state => state['features/base/conference'].conference);
@@ -254,11 +254,18 @@ export function useSpeakerStats() {
         [ dispatch, initUpdateStats ]);
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            updateStats();
-        }, SPEAKER_STATS_RELOAD_INTERVAL);
+        let intervalId = null;
+        if (periodicUpdate) {
+            intervalId = setInterval(() => {
+                updateStats();
+            }, SPEAKER_STATS_RELOAD_INTERVAL);
+        }
 
-        return () => clearInterval(intervalId);
+        return () => {
+            if (periodicUpdate) {
+                clearInterval(intervalId);
+            }
+        };
     }, []);
 
     const localSpeakerStats = Object.keys(speakerStats).length === 0 ? getLocalSpeakerStats() : speakerStats;
