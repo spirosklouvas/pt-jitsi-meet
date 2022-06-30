@@ -152,6 +152,8 @@ const ThumbnailBottomIndicators = ({
     const _allowEditing = !useSelector(isNameReadOnly);
     const _defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
     const _showDisplayName = useSelector(isDisplayNameVisible);
+    const _displaySpeakerTimeOnThumbnails = useSelector(
+        state => state['features/base/settings'].displaySpeakerTimeOnThumbnails);
 
     return (<div className = { className }>
         <StatusIndicators
@@ -171,10 +173,12 @@ const ThumbnailBottomIndicators = ({
                 </span>
             )
         }
-        <TimeSpokenIndicator
-            local = { local }
-            participantId = { participantId }
-            currentLayout = { currentLayout } />
+        {_displaySpeakerTimeOnThumbnails &&
+            <TimeSpokenIndicator
+                local = { local }
+                participantId = { participantId }
+                currentLayout = { currentLayout } />
+        }
     </div>);
 };
 

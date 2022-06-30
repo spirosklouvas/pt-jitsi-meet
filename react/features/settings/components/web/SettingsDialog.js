@@ -247,7 +247,8 @@ function _mapStateToProps(state) {
                     hideSelfView: tabState.hideSelfView,
                     showPrejoinPage: tabState.showPrejoinPage,
                     enabledNotifications: tabState.enabledNotifications,
-                    sendEmotions: tabState.sendEmotions
+                    sendEmotions: tabState.sendEmotions,
+                    displaySpeakerTimeOnThumbnails: tabState.displaySpeakerTimeOnThumbnails
                 };
             },
             styles: 'settings-pane more-pane',

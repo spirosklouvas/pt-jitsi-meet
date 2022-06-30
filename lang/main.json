@@ -489,6 +489,7 @@
         "videoMute": "Start or stop your camera"
     },
     "emotionIndicator": "Emotion Indicator",
+    "speakerThumbnails": "Speaker Thumbnails",
     "liveStreaming": {
         "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
         "busyTitle": "All streamers are currently busy",
@@ -778,6 +779,7 @@
         "joinWithoutAudio": "Join without audio",
         "keyboardShortcuts": "Enable Keyboard shortcuts",
         "sendEmotions": "Share Emotion Indicator",
+        "displaySpeakerTimeOnThumbnails": "Display speaker time on thumbnails",
         "linkCopied": "Link copied to clipboard",
         "lookGood": "Your microphone is working properly",
         "or": "or",

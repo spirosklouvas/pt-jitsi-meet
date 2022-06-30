@@ -87,6 +87,8 @@ export type Props = {
 
     sendEmotions: boolean,
 
+    displaySpeakerTimeOnThumbnails: boolean,
+
     /**
      * Invoked to obtain translated strings.
      */
@@ -139,6 +141,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
         this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
         this._onSendEmotionsEnableChanged = this._onSendEmotionsEnableChanged.bind(this);
+        this._onDisplaySpeakerTimeOnThumbnailsChanged = this._onDisplaySpeakerTimeOnThumbnailsChanged.bind(this);
     }
 
     /**
@@ -285,6 +288,11 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         super._onChange({ sendEmotions: checked });
     }
 
+    _onDisplaySpeakerTimeOnThumbnailsChanged: (Object) => void;
+    _onDisplaySpeakerTimeOnThumbnailsChanged({ target: { checked } }) {
+        super._onChange({ displaySpeakerTimeOnThumbnails: checked });
+    }
+
     /**
      * Returns the React Element for the desktop share frame rate dropdown.
      *
@@ -378,6 +386,25 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     label = { t('prejoin.sendEmotions') }
                     name = 'enable-send-emotions'
                     onChange = { this._onSendEmotionsEnableChanged } />
+            </div>
+        );
+    }
+
+    _renderDisplaySpeakerTimeOnThumbnailsCheckbox() {
+        const { displaySpeakerTimeOnThumbnails, t } = this.props;
+
+        return (
+            <div
+                className = 'settings-sub-pane-element'
+                key = 'display-speaker-time-on-thumbnails'>
+                <h2 className = 'mock-atlaskit-label'>
+                    { t('speakerThumbnails') }
+                </h2>
+                <Checkbox
+                    isChecked = { displaySpeakerTimeOnThumbnails }
+                    label = { t('prejoin.displaySpeakerTimeOnThumbnails') }
+                    name = 'enable-display-speaker-time-on-thumbnails'
+                    onChange = { this._onDisplaySpeakerTimeOnThumbnailsChanged } />
             </div>
         );
     }
@@ -552,6 +579,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                 { showNotificationsSettings && this._renderNotificationsSettings() }
                 { this._renderKeyboardShortcutCheckbox() }
                 { this._renderSendEmotionsCheckbox() }
+                { this._renderDisplaySpeakerTimeOnThumbnailsCheckbox() }
                 { !disableHideSelfView && this._renderSelfViewCheckbox() }
             </div>
         );

@@ -120,6 +120,10 @@ export function submitMoreTab(newState: Object): Function {
         if (newState.sendEmotions !== currentState.sendEmotions) {
             dispatch(updateSettings({ sendEmotions: newState.sendEmotions }));
         }
+
+        if (newState.displaySpeakerTimeOnThumbnails !== currentState.displaySpeakerTimeOnThumbnails) {
+            dispatch(updateSettings({ displaySpeakerTimeOnThumbnails: newState.displaySpeakerTimeOnThumbnails }));
+        }
     };
 }
 

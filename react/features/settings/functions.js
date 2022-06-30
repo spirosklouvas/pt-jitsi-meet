@@ -131,7 +131,8 @@ export function getMoreTabProps(stateful: Object | Function) {
         showNotificationsSettings: Object.keys(enabledNotifications).length > 0,
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
         showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled,
-        sendEmotions: state['features/base/settings'].sendEmotions
+        sendEmotions: state['features/base/settings'].sendEmotions,
+        displaySpeakerTimeOnThumbnails: state['features/base/settings'].displaySpeakerTimeOnThumbnails
     };
 }
 

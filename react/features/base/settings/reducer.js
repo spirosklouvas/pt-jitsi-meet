@@ -46,7 +46,8 @@ const DEFAULT_STATE = {
     },
     userSelectedMicDeviceLabel: undefined,
     userSelectedSkipPrejoin: undefined,
-    sendEmotions: true
+    sendEmotions: true,
+    displaySpeakerTimeOnThumbnails: true
 };
 
 const STORE_NAME = 'features/base/settings';
