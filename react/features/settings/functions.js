@@ -151,7 +151,8 @@ export function getModeratorTabProps(stateful: Object | Function) {
         followMeEnabled,
         startAudioMutedPolicy,
         startVideoMutedPolicy,
-        startReactionsMuted
+        startReactionsMuted,
+        enableInactivityNotifications
     } = state['features/base/conference'];
     const { disableReactionsModeration } = state['features/base/config'];
     const followMeActive = isFollowMeActive(state);
@@ -165,7 +166,8 @@ export function getModeratorTabProps(stateful: Object | Function) {
         followMeEnabled: Boolean(conference && followMeEnabled),
         startReactionsMuted: Boolean(conference && startReactionsMuted),
         startAudioMuted: Boolean(conference && startAudioMutedPolicy),
-        startVideoMuted: Boolean(conference && startVideoMutedPolicy)
+        startVideoMuted: Boolean(conference && startVideoMutedPolicy),
+        enableInactivityNotifications: Boolean(conference && enableInactivityNotifications)
     };
 }
 

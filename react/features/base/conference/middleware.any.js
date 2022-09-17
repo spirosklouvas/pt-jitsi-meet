@@ -19,6 +19,7 @@ import {
     getLocalParticipant,
     getParticipantById,
     getPinnedParticipant,
+    isLocalParticipantModerator,
     PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT
@@ -29,20 +30,26 @@ import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
+    CONFERENCE_WILL_JOIN,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_WILL_LEAVE,
     SEND_TONES,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_ROOM
+    SET_ROOM,
+    ENABLE_INACTIVITY_NOTIFICATIONS
 } from './actionTypes';
 import {
     conferenceFailed,
     conferenceWillLeave,
     createConference,
     setLocalSubject,
-    setSubject
+    setSubject,
+    setEnableInactivityNotifications
 } from './actions';
-import { TRIGGER_READY_TO_CLOSE_REASONS } from './constants';
+import {
+    TRIGGER_READY_TO_CLOSE_REASONS,
+    ENABLE_INACTIVITY_NOTIFICATIONS_COMMAND
+} from './constants';
 import {
     _addLocalTracksToConference,
     _removeLocalTracksFromConference,
@@ -80,6 +87,28 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_SUBJECT_CHANGED:
         return _conferenceSubjectChanged(store, next, action);
+
+    case CONFERENCE_WILL_JOIN: {
+        const { conference } = action;
+
+        conference.addCommandListener(
+            ENABLE_INACTIVITY_NOTIFICATIONS_COMMAND, ({ attributes }, id) => {
+                _onEnableInactivityNotificationsCommand(attributes, id, store);
+            });
+        break;
+    }
+
+    case ENABLE_INACTIVITY_NOTIFICATIONS: {
+        const state = store.getState();
+        const { conference }  = state['features/base/conference'];
+        const { enabled, updateBackend } = action;
+
+        if (conference && isLocalParticipantModerator(state) && updateBackend) {
+            conference.sendCommand(ENABLE_INACTIVITY_NOTIFICATIONS_COMMAND,
+                { attributes: {enableInactivityNotifications: Boolean(enabled) } });
+        }
+        break;
+    }
 
     case CONFERENCE_WILL_LEAVE:
         _conferenceWillLeave(store);
@@ -588,4 +617,32 @@ function _updateLocalParticipantInConference({ dispatch, getState }, next, actio
     }
 
     return result;
+}
+
+function _onEnableInactivityNotificationsCommand(attributes = {}, id, store) {
+    const state = store.getState();
+
+    if (typeof id === 'undefined') {
+        return;
+    }
+
+    const participantSendingCommand = getParticipantById(state, id);
+
+    // ignore local commands
+    if (participantSendingCommand.local) {
+        return;
+    }
+
+    if (participantSendingCommand.role !== 'moderator') {
+        logger.warn('Received' + ENABLE_INACTIVITY_NOTIFICATIONS_COMMAND + ' command not from moderator');
+
+        return;
+    }
+
+    const oldState = Boolean(state['features/base/conference'].enableInactivityNotifications);
+    const newState = attributes.enableInactivityNotifications === 'true';
+
+    if (oldState !== newState) {
+        store.dispatch(setEnableInactivityNotifications(newState, false));
+    }
 }

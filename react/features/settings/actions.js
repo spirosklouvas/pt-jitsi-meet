@@ -5,7 +5,8 @@ import { batch } from 'react-redux';
 import {
     setFollowMe,
     setStartMutedPolicy,
-    setStartReactionsMuted
+    setStartReactionsMuted,
+    setEnableInactivityNotifications
 } from '../base/conference';
 import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
@@ -153,6 +154,10 @@ export function submitModeratorTab(newState: Object): Function {
             || newState.startVideoMuted !== currentState.startVideoMuted) {
             dispatch(setStartMutedPolicy(
                 newState.startAudioMuted, newState.startVideoMuted));
+        }
+
+        if (newState.enableInactivityNotifications !== currentState.enableInactivityNotifications) {
+            dispatch(setEnableInactivityNotifications(newState.enableInactivityNotifications, true));
         }
     };
 }

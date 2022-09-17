@@ -2,6 +2,7 @@
 
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
@@ -16,6 +17,8 @@ import { createLocalizedTime } from '../../../speaker-stats/components/timeFunct
 import { IconDominantSpeaker } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 import { getIndicatorsTooltipPosition } from '../../functions.web';
+
+import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../../notifications';
 
 declare var interfaceConfig: Object;
 
@@ -61,9 +64,9 @@ const useStyles = makeStyles(() => {
     };
 });
 
-function analyzeParticipantTimes(localSpeakerStats, t) {
+function getParticipantTimes(localSpeakerStats, t) {
     if (!localSpeakerStats) {
-        return [false, ""];
+        return [0, {}];
     }
 
     let localParticipantTime = 0;
@@ -77,15 +80,97 @@ function analyzeParticipantTimes(localSpeakerStats, t) {
         }
     }
 
-    return [localParticipantTime, remoteParticipantTimes, true, createLocalizedTime(localParticipantTime, t)];
+    return [localParticipantTime, remoteParticipantTimes];
+}
+
+function displayInactivityNotificationIfNeeded(localParticipantTime, remoteParticipantTimes,
+    enableInactivityNotifications, inactivityNotificationsConfig,
+    conferenceTimestamp, t, dispatch,
+    lastNotificationTime, sentFirstNotification) {
+
+    if (conferenceTimestamp == undefined) {
+        return false;
+    }
+
+    const sendNotificationIfNeeded = (nowMs) => {
+        let maxTimeMs = 0;
+        for (const pID in remoteParticipantTimes) {
+            if (remoteParticipantTimes.hasOwnProperty(pID)) {
+                const timeMs = remoteParticipantTimes[pID];
+                if (timeMs > maxTimeMs) {
+                    maxTimeMs = timeMs;
+                }
+            }
+        }
+        console.log("Max time: " + maxTimeMs); //DEBUG
+        if (maxTimeMs <= 0) {
+            return
+        }
+
+        const localTimeMs = localParticipantTime;
+        if (localTimeMs < (inactivityNotificationsConfig.inactivityNotificationsPercentage * (maxTimeMs / 100))) {
+            // send notification
+            lastNotificationTime.current = nowMs
+            const elapsedSeconds = (nowMs - conferenceTimestamp) / 1000
+            console.log("Sending inactivity notification at " + elapsedSeconds) //DEBUG
+            dispatch(showNotification({
+                // titleKey: "",
+                // descriptionKey: "",
+                title: "Inactivity Notification",
+                description: "You should try to participate in the conversation a little more"
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM))
+        }
+    }
+
+    if (!enableInactivityNotifications) {
+        // notifications disabled
+        lastNotificationTime.current = 0;
+        return false;
+    } else {
+        const nowMs = (new Date().getTime());
+        const timeSinceLastNotificationMs = nowMs - lastNotificationTime.current;
+        const timeSinceLastNotificationS = timeSinceLastNotificationMs / 1000
+        if (!sentFirstNotification.current) {
+            // initial notification
+            const elapsedSeconds = (nowMs - conferenceTimestamp) / 1000
+            if (elapsedSeconds > inactivityNotificationsConfig.inactivityMinimumSeconds) {
+                sendNotificationIfNeeded(nowMs);
+                sentFirstNotification.current = true;
+                return true;
+            }
+        } else if (timeSinceLastNotificationS > inactivityNotificationsConfig.inactivityNotificationsFrequencySeconds) {
+            // subsequent notifications
+            sendNotificationIfNeeded(nowMs);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }
 
 const LocalTimeSpokenIndicator = () => {
     const localSpeakerStats = useSpeakerStats(true);
     const { t } = useTranslation();
 
-    const [ localParticipantTime, remoteParticipantTimes, shouldDisplayNotice, noticeMessage ] =
-        analyzeParticipantTimes(localSpeakerStats, t);
+    const inactivityNotificationsConfig = useSelector(state => state['features/base/config']).inactivityNotifications;
+
+    const dispatch = useDispatch();
+
+    const [ localParticipantTime, remoteParticipantTimes ] =
+        getParticipantTimes(localSpeakerStats, t);
+
+    const { enableInactivityNotifications } = useSelector(state => state['features/base/conference']) || {};
+    const { conferenceTimestamp } = useSelector(state => state['features/base/conference']) || {};
+
+    const lastNotificationTime = useRef(0);
+    const sentFirstNotification = useRef(false);
+
+    const displayedNotification = displayInactivityNotificationIfNeeded(localParticipantTime,
+        remoteParticipantTimes, enableInactivityNotifications,
+        inactivityNotificationsConfig, conferenceTimestamp, t, dispatch,
+        lastNotificationTime, sentFirstNotification
+    )
 
     return (
         <>
@@ -102,8 +187,8 @@ const RemoteTimeSpokenIndicator = ({
     const localSpeakerStats = useSpeakerStats(false);
     const { t } = useTranslation();
 
-    const [ localParticipantTime, remoteParticipantTimes, shouldDisplayNotice, noticeMessage ] =
-        analyzeParticipantTimes(localSpeakerStats, t);
+    const [ localParticipantTime, remoteParticipantTimes ] =
+        getParticipantTimes(localSpeakerStats, t);
 
     return (
         <>

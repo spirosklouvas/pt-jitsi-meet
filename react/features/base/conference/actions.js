@@ -59,7 +59,8 @@ import {
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
     SET_START_MUTED_POLICY,
-    SET_START_REACTIONS_MUTED
+    SET_START_REACTIONS_MUTED,
+    ENABLE_INACTIVITY_NOTIFICATIONS
 } from './actionTypes';
 import {
     AVATAR_URL_COMMAND,
@@ -829,5 +830,14 @@ export function setLocalSubject(localSubject: string) {
     return {
         type: CONFERENCE_LOCAL_SUBJECT_CHANGED,
         localSubject
+    };
+}
+
+
+export function setEnableInactivityNotifications(enabled: boolean, updateBackend: boolean = false) {
+    return {
+        type: ENABLE_INACTIVITY_NOTIFICATIONS,
+        enabled,
+        updateBackend
     };
 }

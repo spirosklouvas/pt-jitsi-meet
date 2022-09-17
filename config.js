@@ -1271,6 +1271,11 @@ var config = {
     //     disableResizable: false,
     // }
 
+    inactivityNotifications: {
+        inactivityNotificationsPercentage: 5,
+        inactivityMinimumSeconds: 600,
+        inactivityNotificationsFrequencySeconds: 600,
+    },
 
     // Specifies whether the chat emoticons are disabled or not
     // disableChatSmileys: false,

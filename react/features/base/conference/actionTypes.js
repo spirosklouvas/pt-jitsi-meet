@@ -249,3 +249,11 @@ export const SET_ROOM = 'SET_ROOM';
  * }
  */
 export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
+
+/*
+ * {
+ *     type: ENABLE_INACTIVITY_NOTIFICATIONS,
+ *     enabled: boolean
+ * }
+ */
+export const ENABLE_INACTIVITY_NOTIFICATIONS = 'ENABLE_INACTIVITY_NOTIFICATIONS';

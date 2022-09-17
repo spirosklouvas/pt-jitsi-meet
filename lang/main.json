@@ -899,7 +899,8 @@
         "startReactionsMuted": "Mute reaction sounds for everyone",
         "startVideoMuted": "Everyone starts hidden",
         "talkWhileMuted": "Talk while muted",
-        "title": "Settings"
+        "title": "Settings",
+        "enableInactivityNotifications": "Enable Inactivity Notifications"
     },
     "settingsView": {
         "advanced": "Advanced",

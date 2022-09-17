@@ -31,3 +31,5 @@ export const JITSI_CONFERENCE_URL_KEY = Symbol('url');
 export const TRIGGER_READY_TO_CLOSE_REASONS = [
     'The meeting has been terminated'
 ];
+
+export const ENABLE_INACTIVITY_NOTIFICATIONS_COMMAND = 'enable-inactivity-notifications-command'

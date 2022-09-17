@@ -45,6 +45,8 @@ export type Props = {
      */
     startReactionsMuted: boolean,
 
+    enableInactivityNotifications: boolean,
+
     /**
      * Invoked to obtain translated strings.
      */
@@ -71,6 +73,7 @@ class ModeratorTab extends AbstractDialogTab<Props> {
         this._onStartVideoMutedChanged = this._onStartVideoMutedChanged.bind(this);
         this._onStartReactionsMutedChanged = this._onStartReactionsMutedChanged.bind(this);
         this._onFollowMeEnabledChanged = this._onFollowMeEnabledChanged.bind(this);
+        this._onEnableInactivityNotificationsChanged = this._onEnableInactivityNotificationsChanged.bind(this);
     }
 
     /**
@@ -139,6 +142,23 @@ class ModeratorTab extends AbstractDialogTab<Props> {
         super._onChange({ followMeEnabled: checked });
     }
 
+    _onEnableInactivityNotificationsChanged: (Object) => void;
+    _onEnableInactivityNotificationsChanged({target: {checked} }) {
+        super._onChange({ enableInactivityNotifications: checked });
+    }
+
+    _renderEnableInactivityNotificationsChanged() {
+        const { enableInactivityNotifications, t } = this.props;
+
+        return (
+            <Checkbox
+                isChecked = { enableInactivityNotifications }
+                label = { t('settings.enableInactivityNotifications') }
+                name = 'enable-inactivity-notifications'
+                onChange = { this._onEnableInactivityNotificationsChanged } />
+        )
+    }
+
     /**
      * Returns the React Element for modifying conference-wide settings.
      *
@@ -183,6 +203,7 @@ class ModeratorTab extends AbstractDialogTab<Props> {
                             label = { t('settings.startReactionsMuted') }
                             name = 'start-reactions-muted'
                             onChange = { this._onStartReactionsMutedChanged } /> }
+                    { this._renderEnableInactivityNotificationsChanged() }
                 </div>
             </div>
         );

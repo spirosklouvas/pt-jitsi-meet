@@ -22,7 +22,8 @@ import {
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
     SET_START_MUTED_POLICY,
-    SET_START_REACTIONS_MUTED
+    SET_START_REACTIONS_MUTED,
+    ENABLE_INACTIVITY_NOTIFICATIONS
 } from './actionTypes';
 import { isRoomValid } from './functions';
 
@@ -34,7 +35,8 @@ const DEFAULT_STATE = {
     locked: undefined,
     membersOnly: undefined,
     password: undefined,
-    passwordRequired: undefined
+    passwordRequired: undefined,
+    enableInactivityNotifications: false
 };
 
 /**
@@ -103,7 +105,12 @@ ReducerRegistry.register(
                 startAudioMutedPolicy: action.startAudioMutedPolicy,
                 startVideoMutedPolicy: action.startVideoMutedPolicy
             };
+
+        case ENABLE_INACTIVITY_NOTIFICATIONS:
+            return set(state, 'enableInactivityNotifications', action.enabled);
+
         }
+
 
         return state;
     });
